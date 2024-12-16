@@ -13,5 +13,4 @@ secondchangeinterval,0
 otherghosttalk,0
 
 //更新url
-//homeurl,
 homeurl,https://raw.githubusercontent.com/ambergon/ukagakaPlugin_Inventory/master/
