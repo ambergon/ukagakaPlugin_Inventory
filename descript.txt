@@ -5,7 +5,7 @@ type,plugin
 name,Inventory
 craftman,ambergon
 filename,yaya.dll
-
+craftmanurl,https://ambergonslibrary.com/
 // make inventory
 id,97d42642-58ba-23c0-d8ea-22d589e0078a
 
