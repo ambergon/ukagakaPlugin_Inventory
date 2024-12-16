@@ -1,0 +1,16 @@
+Charset,UTF-8
+readme.charset,UTF-8
+readme,ReadMe.md
+type,plugin
+name,Inventory
+craftman,ambergon
+filename,yaya.dll
+
+// make inventory
+id,97d42642-58ba-23c0-d8ea-22d589e0078a
+
+secondchangeinterval,0
+otherghosttalk,0
+
+//更新url
+//homeurl,

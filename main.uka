@@ -1,0 +1,287 @@
+
+
+
+
+
+
+
+
+// 酒
+// タバコ
+// 弁当
+// -----------------------------------------------------------------
+// Rule
+// インベントリはinv.を接頭辞にし、inv.XXX/inv.お酒 などにする。
+
+
+version {
+	"origin/1.0"
+}
+
+OnPluginLoad.Config {
+    // アイテム名の上限
+    item_name_max = 99
+}
+
+// プラグイン起動時に呼ばれる関数
+//{{{
+OnPluginLoad.Self {
+    // inv.aa = "aa"
+    // inv.bb = "bb"
+    // inv.cc = "cc" 
+    // inv.あ = "あいうえお" 
+    inv.変数名 = "数値" 
+}
+//}}}
+// プラグイン終了時に呼ばれる関数
+//{{{
+OnPluginUnload.Self {
+}
+//}}}
+
+
+// ゴースト起動時にゴーストにOnExistPlugin_Inventoryを呼ぶ。
+// ゴースト側に OnExistPlugin_Inventory関数を実装することで、プラグインが入っているか検知することができる。
+//{{{
+OnGhostBoot {
+    res_event = 'OnExistPlugin_Inventory' 
+    res_reference[0] = ""
+}
+//}}}
+
+
+
+// Reference1 : プラグインを呼び出したゴースト名。Sakura名ではない。
+// 右クリックからこのプラグインを選択することで、アイテム一覧を表示することができる。
+// アイテムをクリックすることで、OnUseItem関数を呼ぶ。
+//{{{
+OnMenuExec {
+    // セーブデータを読み込み 接頭辞 inv. から始まる変数をすべてロードする。
+    _Inventory = GETVARLIST( "inv." )
+    _res = "[所持品]\n\n"
+    for _i = 0 ; _i < ARRAYSIZE(_Inventory) ; _i++ {
+
+        // 在庫が一つでもあれば表示する。
+        if 0 < _Inventory[ _i ] {
+            // 個数 : [ アイテム使用スクリプト ] アイテム名 を表示する。
+            _Item = SUBSTR( _Inventory[_i] , 4 , item_name_max ) 
+            _res = _res + EVAL( _Inventory[_i] ) + " : " + "\_a[OnUseItem," +  _Item + "]" + _Item + "\_a" + "\n"
+
+        // 在庫がないアイテムを削除する。
+        } else {
+            ERASEVAR( _Inventory[_i] )
+        }
+    }
+    _res = "\_q" + _res + "\_q"
+    _res
+
+}
+//}}}
+
+
+// アイテムを使用した際に呼ばれる関数。
+// ゴーストの OnCommunicate に use:アイテム名 とのスクリプトが飛ぶ。
+//{{{
+OnUseItem {
+    // test = "use:" + reference[0]
+    // test
+
+    res_target  = '__SYSTEM_ALL_GHOST__'
+    res_event   = 'OnCommunicate' 
+    // res_event   = 'OnInventoryPlugin_UseItem' 
+    res_reference[0] = "use:" + reference[0]
+}
+//}}}
+
+
+// "\![raiseplugin,Inventory,OnFlagOn,アイテム名]"
+// reference[0] : アイテム名
+//{{{
+OnFlagOn {
+    // 変数名が格納されていなければキャンセル。
+    if reference[0] == "" {
+        return
+    }
+    EVAL( "inv." + reference[0] + " = 1" )
+}
+//}}}
+
+// "\![raiseplugin,Inventory,OnFlagOff,アイテム名]"
+// reference[0] : アイテム名
+//{{{
+OnFlagOff {
+    // 変数名が格納されていなければキャンセル。
+    if reference[0] == "" {
+        return
+    }
+    ERASEVAR( "inv." + reference[0] ) 
+}
+
+//}}}
+
+
+// "\![raiseplugin,Inventory,OnIncrementItem,アイテム名]"
+// reference[0] : アイテム名
+//{{{
+OnIncrementItem {
+    // 変数名が格納されていなければキャンセル。
+    if reference[0] == "" {
+        return
+    }
+    // 変数が存在しなければ 1に。
+    if ISVAR( "inv." + reference[0] ) == 0 {
+        EVAL( "inv." + reference[0] + " = 1" )
+    // 存在すれば+1
+    } else {
+        EVAL( "inv." + reference[0] + " = " + "inv." + reference[0] + " + 1 " )
+    }
+}
+
+//}}}
+
+// "\![raiseplugin,Inventory,OnDecrementItem,アイテム名]"
+// reference[0] : アイテム名
+//{{{
+OnDecrementItem {
+    // 変数名が格納されていなければキャンセル。
+    if reference[0] == "" {
+        return
+    }
+
+    // 変数が存在しなければ何もしない。
+    if ISVAR( "inv." + reference[0] ) == 0 {
+        return
+    }
+
+    EVAL( "inv." + reference[0] + " = " + "inv." + reference[0] + " - 1 " )
+    // 0以下なら変数を削除する。
+    if EVAL( "inv." + reference[0] ) < 1 {
+        ERASEVAR( "inv." + reference[0] ) 
+    }
+
+}
+//}}}
+
+
+// "\![raiseplugin,Inventory,OnAddItem,アイテム名,追加個数]"
+// reference[0] : アイテム名
+//{{{
+OnAddItem {
+
+    //{{{
+    // 引数の数が足りなければキャンセル
+    if reference[0] == "" {
+        return
+    }
+    if reference[1] == "" {
+        return
+    }
+    //}}}
+
+    // 変数が存在しなければ 1に。
+    if ISVAR( "inv." + reference[0] ) == 0 {
+        EVAL( "inv." + reference[0] + " = " + reference[1] )
+    // 存在すれば
+    } else {
+        EVAL( "inv." + reference[0] + " = " + "inv." + reference[0] + " + " + reference[1] )
+    }
+}
+//}}}
+
+// "\![raiseplugin,Inventory,OnSubItem,アイテム名,追加個数]"
+// reference[0] : アイテム名
+//{{{
+OnSubItem {
+    //{{{
+    // 引数の数が足りなければキャンセル
+    if reference[0] == "" {
+        return
+    }
+    if reference[1] == "" {
+        return
+    }
+    //}}}
+
+    // 変数が存在しなければ何もしない。
+    if ISVAR( "inv." + reference[0] ) == 0 {
+        return
+    }
+
+    EVAL( "inv." + reference[0] + " = " + "inv." + reference[0] + " - " + reference[1] )
+    // 0以下なら変数を削除する。
+    if EVAL( "inv." + reference[0] ) < 1 {
+        ERASEVAR( "inv." + reference[0] ) 
+    }
+}
+
+//}}}
+
+
+// "\![raiseplugin,Inventory,OnCheckItem,アイテム名]"
+// reference[0] : アイテム名
+// to func -> OnInventoryResult
+// res[0] : アイテム名
+// res[0] : 個数
+//{{{
+OnCheckItem {
+    
+    // 引数の数が足りなければキャンセル
+    if reference[0] == "" {
+        return
+    }
+
+    // 変数が存在しなければ0とする。
+    if ISVAR( "inv." + reference[0] ) == 0 {
+        res_event           = 'OnInventoryResult' 
+        res_reference[0]    = reference[0]
+        res_reference[1]    = 0
+    } else {
+        res_event           = 'OnInventoryResult' 
+        res_reference[0]    = reference[0]
+        res_reference[1]    = EVAL( "inv." + reference[0] )
+    }
+}
+//}}}
+
+// to func -> OnInventoryImport
+// res[N] : アイテム名
+//{{{
+OnExportItem {
+    _Inventory = GETVARLIST( "inv." )
+    res_event           = 'OnInventoryImport' 
+    res_reference       = _Inventory 
+}
+//}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
