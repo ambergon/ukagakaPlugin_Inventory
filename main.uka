@@ -5,10 +5,6 @@
 
 
 
-
-// 酒
-// タバコ
-// 弁当
 // -----------------------------------------------------------------
 // Rule
 // インベントリはinv.を接頭辞にし、inv.XXX/inv.お酒 などにする。
@@ -190,6 +186,7 @@ OnAddItem {
 
 // "\![raiseplugin,Inventory,OnSubItem,アイテム名,追加個数]"
 // reference[0] : アイテム名
+// reference[1] : 追加個数
 //{{{
 OnSubItem {
     //{{{
@@ -217,6 +214,26 @@ OnSubItem {
 //}}}
 
 
+// reference[0] : アイテム名
+// reference[1] : 設定個数
+OnSetItem {
+    //{{{
+    // 引数の数が足りなければキャンセル
+    if reference[0] == "" {
+        return
+    }
+    if reference[1] == "" {
+        return
+    }
+    //}}}
+
+    EVAL( "inv." + reference[0] + " = " + reference[1] )
+    // 0以下なら変数を削除する。
+    if EVAL( "inv." + reference[0] ) < 1 {
+        ERASEVAR( "inv." + reference[0] ) 
+    }
+}
+
 // "\![raiseplugin,Inventory,OnCheckItem,アイテム名]"
 // reference[0] : アイテム名
 // to func -> OnInventoryResult
@@ -242,6 +259,22 @@ OnCheckItem {
     }
 }
 //}}}
+
+// res[N] : アイテム名
+//{{{
+OnImportItem {
+    // すべての引数を確認する。
+    for _i = 0 ; _i < ARRAYSIZE( reference ) ; _i++ {
+        // その引数が存在しなければ 個数1にする。
+        if ISVAR( "inv." + reference[_i] ) == 0 {
+            EVAL( "inv." + reference[_i] + " = 1" )
+        }
+    }
+    res_event           = 'OnInventoryImport' 
+    res_reference       = _Inventory 
+}
+//}}}
+
 
 // to func -> OnInventoryImport
 // res[N] : アイテム名

@@ -36,6 +36,13 @@ use:アイテム名 が すべてのゴーストのOnCommunicateに飛びます�
 この際、このプラグイン側で個数の増減は行いません。
 
 
+### OnSetItem
+指定したアイテムの個数を上書きします。
+```
+"\![notifyplugin,Inventory,OnSetItem,アイテム名,個数]"
+```
+
+
 ### OnFlagOn 
 指定したアイテムの個数を1にします。
 ```
@@ -84,6 +91,14 @@ use:アイテム名 が すべてのゴーストのOnCommunicateに飛びます�
 OnInventoryResult関数が呼ばれ、R0にアイテム名,R1に個数が返ってきます。
 ```
 "\![raiseplugin,Inventory,OnCheckItem,アイテム名]"
+```
+
+
+### OnImportItem
+指定した全てのアイテム名の所持数を1にします。
+すでに所持しているものに関しては個数が変化しません。
+```
+"\![notifyplugin,Inventory,OnImportItem,アイテム名,アイテム名....]
 ```
 
 
