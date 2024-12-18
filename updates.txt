@@ -1,6 +1,6 @@
 charset,Shift_JIS
 file,.gitignored1b053dfa2e377cbcb08b8bb0e2e609bsize=28date=2024-12-16T15:00:59
-file,ReadMe.mdcc1aaf528964fb8767ee5799e3b0683dsize=5538date=2024-12-17T11:41:53
+file,ReadMe.md4910c1cd5cd27d159481cf694fac7b0bsize=5634date=2024-12-18T09:10:49
 file,System_yaya/yaya_optional.dic7cfa5a7ee1d90011af1dc1e04843b28fsize=6573date=2024-12-01T16:46:02
 file,System_yaya/yaya_plugin2.dic2bde9c4e9061ad8fff0b418d6a4d29e5size=18889date=2024-12-01T16:46:02
 file,descript.txtaf064394073b70d3d27373a42ba053b8size=352date=2024-12-16T21:49:56
