@@ -75,7 +75,9 @@ OnMenuExec {
 
 
 // アイテムを使用した際に呼ばれる関数。
-// ゴーストの OnCommunicate に use:アイテム名 とのスクリプトが飛ぶ。
+// ゴーストの OnCommunicate に対して
+// reference[0] : plugin
+// reference[1] : use:アイテム名 とのスクリプトが飛ぶ。
 //{{{
 OnUseItem {
     // test = "use:" + reference[0]
@@ -84,7 +86,8 @@ OnUseItem {
     res_target  = '__SYSTEM_ALL_GHOST__'
     res_event   = 'OnCommunicate' 
     // res_event   = 'OnInventoryPlugin_UseItem' 
-    res_reference[0] = "use:" + reference[0]
+    res_reference[0] = "plugin"
+    res_reference[1] = "use:" + reference[0]
 }
 //}}}
 
