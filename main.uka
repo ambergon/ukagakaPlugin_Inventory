@@ -26,7 +26,6 @@ OnPluginLoad.Self {
     // inv.bb = "bb"
     // inv.cc = "cc" 
     // inv.あ = "あいうえお" 
-    inv.変数名 = "数値" 
 }
 //}}}
 // プラグイン終了時に呼ばれる関数
@@ -68,7 +67,7 @@ OnMenuExec {
             ERASEVAR( _Inventory[_i] )
         }
     }
-    _res = "\_q" + _res + "\_q"
+    _res = "\0\b[2]\_q" + _res + "\_q"
     _res
 
 }
